@@ -83,8 +83,8 @@ class Flutter3DViewer extends StatefulWidget {
     this.onError,
   }) : progressBarColor = null,
        controller = null,
-       activeGestureInterceptor = true,
-       enableTouch = true,
+       activeGestureInterceptor = false,
+       enableTouch = false,
        isObj = true;
 
   @override
