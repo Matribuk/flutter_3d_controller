@@ -60,32 +60,32 @@ class Flutter3DViewer extends StatefulWidget {
     required this.src,
     this.controller,
     this.progressBarColor,
-    this.activeGestureInterceptor = true,
-    this.enableTouch = true,
+    this.activeGestureInterceptor = false,
+    this.enableTouch = false,
     this.onProgress,
     this.onLoad,
     this.onError,
-  })  : isObj = false,
-        scale = null,
-        cameraX = null,
-        cameraY = null,
-        cameraZ = null;
+  }) : isObj = false,
+       scale = null,
+       cameraX = null,
+       cameraY = null,
+       cameraZ = null;
 
-  const Flutter3DViewer.obj(
-      {super.key,
-      required this.src,
-      this.scale,
-      this.cameraX,
-      this.cameraY,
-      this.cameraZ,
-      this.onProgress,
-      this.onLoad,
-      this.onError})
-      : progressBarColor = null,
-        controller = null,
-        activeGestureInterceptor = true,
-        enableTouch = true,
-        isObj = true;
+  const Flutter3DViewer.obj({
+    super.key,
+    required this.src,
+    this.scale,
+    this.cameraX,
+    this.cameraY,
+    this.cameraZ,
+    this.onProgress,
+    this.onLoad,
+    this.onError,
+  }) : progressBarColor = null,
+       controller = null,
+       activeGestureInterceptor = true,
+       enableTouch = true,
+       isObj = true;
 
   @override
   State<Flutter3DViewer> createState() => _Flutter3DViewerState();
@@ -101,8 +101,9 @@ class _Flutter3DViewerState extends State<Flutter3DViewer> {
     _id = _utils.generateId();
     _controller = widget.controller ?? Flutter3DController();
     if (kIsWeb) {
-      _controller
-          .init(Flutter3DRepository(IFlutter3DDatasource(_id, null, false)));
+      _controller.init(
+        Flutter3DRepository(IFlutter3DDatasource(_id, null, false)),
+      );
     }
     super.initState();
   }
@@ -111,54 +112,58 @@ class _Flutter3DViewerState extends State<Flutter3DViewer> {
   Widget build(BuildContext context) {
     return widget.isObj
         ? ObjViewer(
-            src: widget.src,
-            interactive: widget.enableTouch,
-            onSceneCreated: (scene, modelName, modelUrl) {
-              scene.camera.position.z = widget.cameraZ ?? 10;
-              scene.camera.target.y = widget.cameraY ?? 0;
-              scene.camera.target.x = widget.cameraX ?? 0;
-              scene.world.add(
-                obj.Object(
-                  scale: Vector3(widget.scale ?? 5.0, widget.scale ?? 5.0,
-                      widget.scale ?? 5.0),
-                  fileName: modelName,
-                  url: modelUrl,
-                  onProgress: widget.onProgress,
-                  onLoad: (modelAddress) {
-                    widget.onLoad?.call(modelAddress);
-                  },
-                  onError: (error) {
-                    widget.onError?.call(error);
-                  },
+          src: widget.src,
+          interactive: widget.enableTouch,
+          onSceneCreated: (scene, modelName, modelUrl) {
+            scene.camera.position.z = widget.cameraZ ?? 10;
+            scene.camera.target.y = widget.cameraY ?? 0;
+            scene.camera.target.x = widget.cameraX ?? 0;
+            scene.world.add(
+              obj.Object(
+                scale: Vector3(
+                  widget.scale ?? 5.0,
+                  widget.scale ?? 5.0,
+                  widget.scale ?? 5.0,
                 ),
-              );
-            },
-          )
+                fileName: modelName,
+                url: modelUrl,
+                onProgress: widget.onProgress,
+                onLoad: (modelAddress) {
+                  widget.onLoad?.call(modelAddress);
+                },
+                onError: (error) {
+                  widget.onError?.call(error);
+                },
+              ),
+            );
+          },
+        )
         : ModelViewer(
-            id: _id,
-            src: widget.src,
-            progressBarColor: widget.progressBarColor,
-            relatedJs: _utils.injectedJS(_id, 'flutter-3d-controller'),
-            interactionPrompt: InteractionPrompt.none,
-            activeGestureInterceptor: widget.activeGestureInterceptor,
-            cameraControls: widget.enableTouch,
-            ar: false,
-            autoPlay: false,
-            autoRotate: false,
-            debugLogging: false,
-            disableTap: true,
-            onProgress: widget.onProgress,
-            onLoad: (modelAddress) {
-              _controller.onModelLoaded.value = true;
-              widget.onLoad?.call(modelAddress);
-            },
-            onError: (error) {
-              _controller.onModelLoaded.value = false;
-              widget.onError?.call(error);
-            },
-            onWebViewCreated: kIsWeb
-                ? null
-                : (InAppWebViewController value) {
+          id: _id,
+          src: widget.src,
+          progressBarColor: widget.progressBarColor,
+          relatedJs: _utils.injectedJS(_id, 'flutter-3d-controller'),
+          interactionPrompt: InteractionPrompt.none,
+          activeGestureInterceptor: widget.activeGestureInterceptor,
+          cameraControls: widget.enableTouch,
+          ar: false,
+          autoPlay: false,
+          autoRotate: false,
+          debugLogging: false,
+          disableTap: true,
+          onProgress: widget.onProgress,
+          onLoad: (modelAddress) {
+            _controller.onModelLoaded.value = true;
+            widget.onLoad?.call(modelAddress);
+          },
+          onError: (error) {
+            _controller.onModelLoaded.value = false;
+            widget.onError?.call(error);
+          },
+          onWebViewCreated:
+              kIsWeb
+                  ? null
+                  : (InAppWebViewController value) {
                     _controller.init(
                       Flutter3DRepository(
                         IFlutter3DDatasource(
@@ -169,6 +174,6 @@ class _Flutter3DViewerState extends State<Flutter3DViewer> {
                       ),
                     );
                   },
-          );
+        );
   }
 }

@@ -91,12 +91,7 @@ class _ObjViewerState extends State<ObjViewer> {
         size: Size(constraints.maxWidth, constraints.maxHeight),
       );
       return widget.interactive
-          ? GestureDetector(
-              onScaleStart: _handleScaleStart,
-              onScaleUpdate: _handleScaleUpdate,
-              child: customPaint,
-            )
-          : customPaint;
+          customPaint;
     });
   }
 }
