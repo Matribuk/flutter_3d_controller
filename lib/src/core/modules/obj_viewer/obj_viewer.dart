@@ -3,8 +3,8 @@ import 'package:flutter_3d_controller/src/core/exception/flutter_3d_controller_e
 import 'package:vector_math/vector_math_64.dart';
 import 'scene.dart';
 
-typedef SceneCreatedCallback = void Function(
-    Scene scene, String modelName, String? modelUrl);
+typedef SceneCreatedCallback =
+    void Function(Scene scene, String modelName, String? modelUrl);
 
 class ObjViewer extends StatefulWidget {
   const ObjViewer({
@@ -39,7 +39,10 @@ class _ObjViewerState extends State<ObjViewer> {
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     scene.camera.trackBall(
-        toVector2(_lastFocalPoint), toVector2(details.localFocalPoint), 1.25);
+      toVector2(_lastFocalPoint),
+      toVector2(details.localFocalPoint),
+      1.25,
+    );
     _lastFocalPoint = details.localFocalPoint;
     if (_lastZoom == null) {
       _lastZoom = scene.camera.zoom;
@@ -59,8 +62,11 @@ class _ObjViewerState extends State<ObjViewer> {
     // prevent setState() or markNeedsBuild called during build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final modelSrcData = _parseModelSrc(widget.src);
-      widget.onSceneCreated
-          ?.call(scene, modelSrcData[0] ?? widget.src, modelSrcData[1]);
+      widget.onSceneCreated?.call(
+        scene,
+        modelSrcData[0] ?? widget.src,
+        modelSrcData[1],
+      );
     });
   }
 
@@ -74,8 +80,11 @@ class _ObjViewerState extends State<ObjViewer> {
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final modelSrcData = _parseModelSrc(widget.src);
-        widget.onSceneCreated
-            ?.call(scene, modelSrcData[0] ?? widget.src, modelSrcData[1]);
+        widget.onSceneCreated?.call(
+          scene,
+          modelSrcData[0] ?? widget.src,
+          modelSrcData[1],
+        );
       });
     }
   }
@@ -83,16 +92,16 @@ class _ObjViewerState extends State<ObjViewer> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      scene.camera.viewportWidth = constraints.maxWidth;
-      scene.camera.viewportHeight = constraints.maxHeight;
-      final customPaint = CustomPaint(
-        painter: _ObjPainter(scene),
-        size: Size(constraints.maxWidth, constraints.maxHeight),
-      );
-      return widget.interactive
-          customPaint;
-    });
+      builder: (BuildContext context, BoxConstraints constraints) {
+        scene.camera.viewportWidth = constraints.maxWidth;
+        scene.camera.viewportHeight = constraints.maxHeight;
+        final customPaint = CustomPaint(
+          painter: _ObjPainter(scene),
+          size: Size(constraints.maxWidth, constraints.maxHeight),
+        );
+        return customPaint;
+      },
+    );
   }
 }
 
@@ -133,7 +142,8 @@ List<String?> _parseModelSrc(String src) {
     result[1] = null;
   } else {
     throw Flutter3dControllerFormatException(
-        message: 'Cannot Parse the model source.');
+      message: 'Cannot Parse the model source.',
+    );
   }
   return result;
 }
