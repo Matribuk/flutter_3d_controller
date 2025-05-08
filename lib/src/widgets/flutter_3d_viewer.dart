@@ -160,20 +160,7 @@ class _Flutter3DViewerState extends State<Flutter3DViewer> {
             _controller.onModelLoaded.value = false;
             widget.onError?.call(error);
           },
-          onWebViewCreated:
-              kIsWeb
-                  ? null
-                  : (InAppWebViewController value) {
-                    _controller.init(
-                      Flutter3DRepository(
-                        IFlutter3DDatasource(
-                          _id,
-                          value,
-                          widget.activeGestureInterceptor,
-                        ),
-                      ),
-                    );
-                  },
+          onWebViewCreated: null,
         );
   }
 }
