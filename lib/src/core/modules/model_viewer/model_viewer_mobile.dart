@@ -71,11 +71,7 @@ class ModelViewerState extends State<ModelViewer> {
         key: _webViewKey,
         initialSettings: InAppWebViewSettings(transparentBackground: true),
         initialUrlRequest: URLRequest(url: WebUri(_proxyURL)),
-        onWebViewCreated: (controller) {
-          _inAppWebViewController = controller;
-          _registerJsChannels(controller);
-          widget.onWebViewCreated?.call(controller);
-        },
+
         onLoadStop: (controller, url) async {},
       ),
     );
